@@ -26,31 +26,6 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
-app.post('/uploadData',function(req,res){
-// note that we are using POST here as we are uploading data
-// so the parameters form part of the BODY of the request rather than the RESTful API
-console.dir(req.body);
-pool.connect(function(err,client,done) {
- if(err){
- console.log("not able to get connection "+ err);
- res.status(400).send(err);
- }
-var geometrystring = "st_geomfromtext('POINT(" + req.body.longitude + " " + req.body.latitude + ")'";
-var querystring = "INSERT into formdata (name,surname,module,language, modulelist, lecturetime, geom) values ('";
-querystring = querystring + req.body.name + "','" + req.body.surname + "','" + req.body.module + "','";
-querystring = querystring + req.body.language + "','" + req.body.modulelist + "','"+ req.body.lecturetime+"',"+geometrystring + "))";
- console.log(querystring);
- client.query( querystring,function(err,result) {
- done();
- if(err){
- console.log(err);
- res.status(400).send(err);
- }
- res.status(200).send("row inserted");
- });
- });
-});
-
 
 
 
@@ -183,4 +158,30 @@ console.log("the colnames "+thecolnames);
  console.log('request '+req.params.name1+"/"+req.params.name2+"/"+req.params.name3+"/"+req.params.name4); 
   // send the response
   res.sendFile(__dirname + '/'+req.params.name1+'/'+req.params.name2+ '/'+req.params.name3+"/"+req.params.name4);
+});
+
+
+app.post('/uploadData',function(req,res){
+// note that we are using POST here as we are uploading data
+// so the parameters form part of the BODY of the request rather than the RESTful API
+console.dir(req.body);
+pool.connect(function(err,client,done) {
+ if(err){
+ console.log("not able to get connection "+ err);
+ res.status(400).send(err);
+ }
+var geometrystring = "st_geomfromtext('POINT(" + req.body.longitude + " " + req.body.latitude + ")'";
+var querystring = "INSERT into formdata (name,surname,module,language, modulelist, lecturetime, geom) values ('";
+querystring = querystring + req.body.name + "','" + req.body.surname + "','" + req.body.module + "','";
+querystring = querystring + req.body.language + "','" + req.body.modulelist + "','"+ req.body.lecturetime+"',"+geometrystring + "))";
+ console.log(querystring);
+ client.query( querystring,function(err,result) {
+ done();
+ if(err){
+ console.log(err);
+ res.status(400).send(err);
+ }
+ res.status(200).send("row inserted");
+ });
+ });
 });
